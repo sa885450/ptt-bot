@@ -2,7 +2,7 @@
 
 ![Node.js](https://img.shields.io/badge/Node.js-v18%2B-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
-![Version](https://img.shields.io/badge/version-7.0.0-orange)
+![Version](https://img.shields.io/badge/version-7.1.0-orange)
 
 > **全方位的 PTT 即時監控系統**
 > 具備 Discord 通知、關鍵字過濾、市場情緒分析與 Web 戰情儀表板功能。
@@ -29,6 +29,17 @@
 ---
 
 ## 🛠️ 版本更新日誌 (Changelog)
+
+### v7.1.0 (The Stability Update) - 2026/02/16
+
+本次更新專注於 **連線穩定性** 與 **反爬蟲對策**，解決了長時間運行後容易出現的 `ECONNRESET` 錯誤。
+
+#### 🕷️ 爬蟲核心優化 (Crawler)
+* **自動重試機制 (Auto-Retry)**：新增智慧重試邏輯，當遇到網路波動或連線中斷時，自動等待 1 秒後重試（最多 3 次），大幅降低任務失敗率。
+* **偽裝瀏覽器 (User-Agent Spoofing)**：現在爬蟲會偽裝成標準 Chrome 瀏覽器，避免被 PTT 伺服器判定為機器人而斷線。
+* **連線增強**：啟用 HTTPS Keep-Alive 機制，並將逾時限制 (Timeout) 放寬至 10 秒，適應尖峰時刻的網路延遲。
+
+---
 
 ### v7.0.0 (The Refactor Update) - 2026/02/16
 
@@ -67,4 +78,3 @@ rm crawler.db
 
 # Windows (PowerShell)
 del crawler.db
-```
