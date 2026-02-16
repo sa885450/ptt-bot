@@ -1,0 +1,11 @@
+# 忽略 Node.js 產生的套件資料夾
+node_modules/
+
+# 忽略本機測試用的秘密檔案
+.env
+
+# 忽略系統產生的暫存檔 (例如 Mac 的 .DS_Store)
+.DS_Store
+
+# 忽略 SQLite 的日誌暫存檔 (避免同步衝突)
+*.db-journal

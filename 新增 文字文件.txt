@@ -1,0 +1,84 @@
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const axios = require('axios');
+const cheerio = require('cheerio');
+const https = require('https');
+
+// 1. 初始化 Express 和 Socket.io
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+// 設定首頁路由：當使用者打開網址，回傳 index.html
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+});
+
+// PTT 爬蟲邏輯 (封裝成函式)
+const TARGET_URL = 'https://www.ptt.cc/bbs/Gossiping/index.html';
+const agent = new https.Agent({ rejectUnauthorized: false }); // 忽略憑證錯誤
+
+async function fetchPTT() {
+    try {
+        const response = await axios.get(TARGET_URL, {
+            httpsAgent: agent,
+            family: 4,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36',
+                'Cookie': 'over18=1'
+            }
+        });
+
+        const $ = cheerio.load(response.data);
+        const posts = [];
+
+        $('.r-ent').each((index, element) => {
+            const title = $(element).find('.title a').text().trim();
+            if (!title) return; // 過濾已被刪除的文章
+            
+            const link = 'https://www.ptt.cc' + $(element).find('.title a').attr('href');
+            const push = $(element).find('.nrec').text().trim() || '0';
+            const author = $(element).find('.meta .author').text().trim();
+            const date = $(element).find('.meta .date').text().trim();
+
+            posts.push({ title, link, push, author, date });
+        });
+
+        return posts; // 回傳爬到的陣列
+
+    } catch (error) {
+        console.error('爬取錯誤:', error.message);
+        return [];
+    }
+}
+
+// 2. 設定 Socket.io 連線事件
+io.on('connection', (socket) => {
+    console.log('👀 有一位使用者連線進入監控室！ ID:', socket.id);
+    
+    // 當使用者斷線時
+    socket.on('disconnect', () => {
+        console.log('👋 使用者離開了。');
+    });
+});
+
+// 3. 啟動定時任務：每 10 秒爬一次，並廣播給所有人
+console.log('⏳ 啟動監控排程：每 10 秒更新一次...');
+setInterval(async () => {
+    const data = await fetchPTT();
+    
+    // 如果有抓到資料，就廣播 (Emit) 給所有連線中的瀏覽器
+    if (data.length > 0) {
+        const timestamp = new Date().toLocaleTimeString();
+        console.log(`[${timestamp}] 廣播 ${data.length} 筆資料給前端`);
+        
+        // 'news_update' 是我們自定義的事件名稱
+        io.emit('news_update', { time: timestamp, posts: data });
+    }
+}, 10000); // 10000 毫秒 = 10 秒
+
+// 4. 啟動伺服器在 Port 3000
+server.listen(3000, () => {
+    console.log('🚀 監控伺服器啟動中：http://localhost:3000');
+});
