@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PTT 萬能情報戰情室 v6.2 情緒黑科技版</title>
+    <title>PTT 萬能情報戰情室 v7.0 旗艦版</title>
     <style>
-        /* 🚀 全域防呆與自訂捲軸 */
         *, *::before, *::after { box-sizing: border-box; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #121212; }
@@ -20,43 +19,34 @@
         .status-container { display: flex; gap: 10px; align-items: center; font-size: 0.85rem; background: #000; padding: 5px 15px; border-radius: 20px; border: 1px solid #333; }
         .db-counter { color: #fab1a0; font-weight: bold; border-right: 1px solid #444; padding-right: 10px; margin-right: 5px; }
 
-        /* 掃描進度條 */
         #progress-bar-container { width: 100%; height: 3px; background: #222; margin-bottom: 20px; border-radius: 3px; overflow: hidden; }
         #progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #d63031, #fab1a0); transition: width 0.1s linear; }
 
         #log-window { background: #000; color: #00ff00; padding: 12px; font-family: 'Consolas', monospace; font-size: 0.75rem; border-radius: 8px; height: 100px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #333; opacity: 0.9; }
         
-        /* 控制面板排版優化 */
         .control-panel { background: #1e1e1e; padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #333; display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; }
         .config-group input { background: #2d2d2d; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 6px; outline: none; margin-bottom: 10px; width: 100%; transition: 0.3s; }
         .config-group input:focus { border-color: #fab1a0; box-shadow: 0 0 5px rgba(250, 177, 160, 0.3); }
         
-        /* 按鈕動態回饋 */
         .btn-update { background: #d63031; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
         .btn-update:hover { background: #ff7675; }
         .btn-update.success { background: #00b894; pointer-events: none; }
 
-        /* 標籤與熱度雲視覺化 */
-        #currentKeywords { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
-        #currentExcludes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+        #currentKeywords, #currentExcludes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
         .tag { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; background: #0984e3; color: #fff; transition: 0.3s; }
         .tag.board { background: #6c5ce7; margin-right: 8px; }
         .tag.heat-high { box-shadow: 0 0 8px #ff7675; border: 1px solid #ff7675; background: #d63031; }
         .tag.heat-low { opacity: 0.4; filter: grayscale(1); }
         
-        /* 資訊列優化 */
         .info-row { margin-bottom: 12px; line-height: 1.5; }
-
         .tab-wrapper { margin-bottom: 20px; border-bottom: 1px solid #333; display: flex; gap: 5px; }
         .tab-btn { background: #2d2d2d; color: #aaa; border: none; padding: 12px 30px; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .tab-btn:hover { background: #3d3d3d; color: #fff; }
         .tab-btn.active { background: #d63031; color: #fff; }
         .tab-content { display: none; animation: fadeIn 0.3s ease; }
         .tab-content.active { display: block; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 過濾器排版優化 */
         .filter-section { margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px 0; }
         .filter-group { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
         .search-box { flex: 1; min-width: 200px; background: #2d2d2d; border: 1px solid #444; color: #fff; padding: 8px 15px; border-radius: 20px; outline: none; transition: 0.3s; }
@@ -70,11 +60,9 @@
         .news-item:hover { transform: translateX(3px); box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-color: #444; }
         .news-item.burst { border-left-color: #d63031; background: #2d1a1a; }
         .news-item.history-item { border-left-color: #fdcb6e; }
-        
         .push-count { font-weight: 900; width: 60px; text-align: center; color: #74b9ff; font-size: 1.1rem; }
         .push-count.high { color: #ff7675; text-shadow: 0 0 8px rgba(255,118,117,0.5); }
         .push-count.history-tag { color: #fdcb6e; font-size: 0.8rem; }
-
         .content { flex: 1; margin-left: 15px; overflow: hidden; }
         .title a { color: #ecf0f1; text-decoration: none; font-size: 1.05rem; font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .title a:hover { color: #fab1a0; }
@@ -82,26 +70,20 @@
         .highlight { color: #ffeaa7; font-weight: bold; text-decoration: underline; }
         .meta { font-size: 0.8rem; color: #7f8c8d; margin-top: 5px; }
         
-        /* RWD 手機版優化 */
-        @media (max-width: 768px) {
-            .control-panel { grid-template-columns: 1fr; }
-            .filter-section { flex-direction: column; align-items: stretch; }
-        }
+        @media (max-width: 768px) { .control-panel { grid-template-columns: 1fr; } .filter-section { flex-direction: column; align-items: stretch; } }
     </style>
 </head>
 <body>
 <div class="container">
     <header>
-        <h1>🔥 PTT 萬能情報戰情室</h1>
+        <h1>🔥 PTT 萬能情報戰情室 v7.0</h1>
         <div class="status-container">
             <span class="db-counter">📦 歷史: <b id="dbCountHeader">0</b></span>
             <span id="status">🟢 監控中</span>
         </div>
     </header>
-    
     <div id="progress-bar-container"><div id="progress-bar"></div></div>
-    
-    <div id="log-window">> 系統就緒...</div>
+    <div id="log-window">> 系統就緒 (v7.0 Core)...</div>
     
     <div class="control-panel">
         <div class="sys-info">
@@ -157,13 +139,11 @@
     let currentHistoryBoard = localStorage.getItem('lastHistoryBoard') || 'ALL';
     let timeLeft = 15;
 
-    // 倒數進度條
     setInterval(() => {
         timeLeft -= 0.1; if (timeLeft <= 0) timeLeft = 15;
         document.getElementById('progress-bar').style.width = ((15 - timeLeft) / 15) * 100 + '%';
     }, 100);
 
-    // 🚀 黑科技：本地情緒字庫 (可隨時在此增減詞彙)
     const bullWords = ['漲', '噴', '利多', '大賺', '看好', '買進', '紅', '突破', '創高', '爆發', '受惠', '營收增', '買盤', '利好'];
     const bearWords = ['跌', '崩', '利空', '套牢', '看壞', '賣出', '綠', '破底', '法會', '逃', '衰退', '下修', '拋售', '出貨', '割韭菜'];
 
@@ -171,26 +151,16 @@
         let score = 0;
         bullWords.forEach(w => { if(title.includes(w)) score++; });
         bearWords.forEach(w => { if(title.includes(w)) score--; });
-        
         if (score > 0) return `<span class="tag" style="background:#d63031; box-shadow: 0 0 5px #d63031;">📈利多</span>`;
         if (score < 0) return `<span class="tag" style="background:#00b894; box-shadow: 0 0 5px #00b894;">📉利空</span>`;
         return '';
     }
 
-    function formatTime(s) { 
-        const d = new Date(s); 
-        return isNaN(d.getTime()) ? "" : d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0'); 
-    }
-    
+    function formatTime(s) { const d = new Date(s); return isNaN(d.getTime()) ? "" : d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0'); }
     function highlight(t) { 
         if (!activeKeywords || !activeKeywords.length) return t;
         let res = t;
-        activeKeywords.forEach(k => { 
-            if(k && k.trim()) { 
-                const r = new RegExp(`(${k})`, 'gi'); 
-                res = res.replace(r, '<span class="highlight">$1</span>'); 
-            }
-        }); 
+        activeKeywords.forEach(k => { if(k && k.trim()) { const r = new RegExp(`(${k})`, 'gi'); res = res.replace(r, '<span class="highlight">$1</span>'); }}); 
         return res; 
     }
     
@@ -210,8 +180,7 @@
     socket.on('news_update', d => {
         document.getElementById('status').textContent = `🟢 更新: ${d.time}`;
         allPosts = d.posts; timeLeft = 15; 
-        renderPosts(); 
-        refreshStatus();
+        renderPosts(); refreshStatus();
         if(document.getElementById('tab-history').classList.contains('active')) loadHistory();
     });
 
@@ -221,17 +190,12 @@
         const pushClass = isBurst ? 'high' : (isHistory && !p.push ? 'history-tag' : '');
         const itemClass = isHistory ? 'history-item' : '';
         const boardTag = p.board ? `<span class="tag board">${p.board}</span>` : '';
-        
-        // 🚀 執行情緒分析並插入標籤
         const sentimentTag = getSentimentTag(p.title);
         
-        return `
-        <div class="news-item ${itemClass} ${isBurst ? 'burst' : ''}">
+        return `<div class="news-item ${itemClass} ${isBurst ? 'burst' : ''}">
             <div class="push-count ${pushClass}">${displayPush}</div>
             <div class="content">
-                <div class="title">
-                    <a href="${p.link}" target="_blank">${boardTag}${sentimentTag}${highlight(p.title)} <span class="time-tag">(${formatTime(p.captured_at || p.created_at)})</span></a>
-                </div>
+                <div class="title"><a href="${p.link}" target="_blank">${boardTag}${sentimentTag}${highlight(p.title)} <span class="time-tag">(${formatTime(p.captured_at || p.created_at)})</span></a></div>
                 <div class="meta">作者: ${p.author || '未知'} ${isHistory ? `| 入庫日期: ${new Date(p.created_at).toLocaleDateString()}` : ''}</div>
             </div>
         </div>`;
@@ -245,28 +209,18 @@
         let filtered = allPosts.filter(p => (currentLiveBoard === 'ALL' || p.board === currentLiveBoard) && p.title.toLowerCase().includes(searchTerm));
         if (sortType === 'push') filtered.sort((a, b) => (b.push === '爆' ? 100 : parseInt(b.push)||0) - (a.push === '爆' ? 100 : parseInt(a.push)||0));
         else if (sortType === 'board') filtered.sort((a, b) => a.board.localeCompare(b.board));
-        
         document.getElementById('news-container').innerHTML = filtered.map(p => generatePostHTML(p, false)).join('');
     }
 
-    async function loadHistory() {
-        try {
-            const res = await fetch('/api/history'); 
-            historyPosts = await res.json();
-            renderHistory();
-        } catch (e) { console.error("歷史加載失敗", e); }
-    }
+    async function loadHistory() { try { const res = await fetch('/api/history'); historyPosts = await res.json(); renderHistory(); } catch (e) { console.error("歷史加載失敗", e); } }
 
     function renderHistory() {
         const searchTerm = document.getElementById('historySearchInput').value.toLowerCase();
         const sortType = document.getElementById('historySort').value;
         localStorage.setItem('lastHistorySort', sortType);
-
         let filtered = historyPosts.filter(p => (currentHistoryBoard === 'ALL' || p.board === currentHistoryBoard) && p.title.toLowerCase().includes(searchTerm));
-        
         if (sortType === 'timeAsc') filtered.reverse();
         else if (sortType === 'pushDesc') filtered.sort((a, b) => (b.push === '爆' ? 100 : parseInt(b.push)||0) - (a.push === '爆' ? 100 : parseInt(a.push)||0));
-        
         document.getElementById('history-list').innerHTML = filtered.length ? filtered.map(p => generatePostHTML(p, true)).join('') : '<div style="text-align:center; padding:50px; color:#555;">暫無紀錄</div>';
     }
 
@@ -274,41 +228,27 @@
         try {
             const res = await fetch('/api/status'); const d = await res.json();
             const histRes = await fetch('/api/history'); const histData = await histRes.json();
-            
             if(d.dbCount !== undefined) document.getElementById('dbCountHeader').innerText = d.dbCount;
             activeKeywords = d.keywords || [];
-
             const counts = {}; activeKeywords.forEach(k => counts[k] = histData.filter(p => p.title.includes(k)).length);
             document.getElementById('currentKeywords').innerHTML = activeKeywords.map(k => {
-                const c = counts[k] || 0;
-                const hClass = c > 5 ? 'heat-high' : (c === 0 ? 'heat-low' : '');
+                const c = counts[k] || 0; const hClass = c > 5 ? 'heat-high' : (c === 0 ? 'heat-low' : '');
                 return `<span class="tag ${hClass}" title="歷史命中: ${c}次">${k}</span>`;
             }).join('');
-
             document.getElementById('currentExcludes').innerHTML = (d.excludes || []).map(e => `<span class="tag" style="background:#555">${e}</span>`).join('');
-            
             const b = d.boards || [];
             document.getElementById('boardDetails').innerHTML = b.map(x => {
                 const name = typeof x === 'object' ? x.name : x;
                 return `<span>• <b>${name}</b> (🔔${typeof x === 'object' ? x.limit : 99} / 🔥+${typeof x === 'object' ? x.trend : 30})</span>`;
             }).join('<br>');
-            
-            const buildFilters = (currentVal, onClickName) => `<button class="filter-btn ${currentVal==='ALL'?'active':''}" onclick="${onClickName}('ALL')">全部</button>` + b.map(x => {
-                const name = typeof x === 'object' ? x.name : x;
-                return `<button class="filter-btn ${currentVal===name?'active':''}" onclick="${onClickName}('${name}')">${name}</button>`;
-            }).join('');
-            
+            const buildFilters = (currentVal, onClickName) => `<button class="filter-btn ${currentVal==='ALL'?'active':''}" onclick="${onClickName}('ALL')">全部</button>` + b.map(x => { const name = typeof x === 'object' ? x.name : x; return `<button class="filter-btn ${currentVal===name?'active':''}" onclick="${onClickName}('${name}')">${name}</button>`; }).join('');
             document.getElementById('boardFilters').innerHTML = buildFilters(currentLiveBoard, 'setLiveBoardFilter');
             document.getElementById('historyBoardFilters').innerHTML = buildFilters(currentHistoryBoard, 'setHistoryBoardFilter');
-            
             if (!document.getElementById('kwInput').value) document.getElementById('kwInput').value = activeKeywords.join(', ');
             if (!document.getElementById('exInput').value) document.getElementById('exInput').value = (d.excludes || []).join(', ');
-            if (!document.getElementById('boardsInput').value) {
-                document.getElementById('boardsInput').value = b.map(x => typeof x === 'object' ? `${x.name}:${x.limit}:${x.trend}` : `${x}:99:30`).join(', ');
-            }
+            if (!document.getElementById('boardsInput').value) document.getElementById('boardsInput').value = b.map(x => typeof x === 'object' ? `${x.name}:${x.limit}:${x.trend}` : `${x}:99:30`).join(', ');
         } catch (e) { console.error("狀態更新失敗", e); }
     }
-
     function setLiveBoardFilter(b) { currentLiveBoard = b; localStorage.setItem('lastLiveBoard', b); renderPosts(); refreshStatus(); }
     function setHistoryBoardFilter(b) { currentHistoryBoard = b; localStorage.setItem('lastHistoryBoard', b); renderHistory(); refreshStatus(); }
     
@@ -318,21 +258,16 @@
         const excludes = document.getElementById('exInput').value.split(',').map(s => s.trim()).filter(s => s);
         const bRaw = document.getElementById('boardsInput').value.split(',').map(s => s.trim()).filter(s => s);
         const boards = bRaw.map(s => { const p = s.split(':'); return { name: p[0], limit: parseInt(p[1])||99, trend: parseInt(p[2])||30 }; });
-        
         await fetch('/api/config', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({keywords, excludes, boards}) });
-        
-        btn.innerText = '✅ 儲存成功';
-        btn.classList.add('success');
+        btn.innerText = '✅ 儲存成功'; btn.classList.add('success');
         setTimeout(() => { btn.innerText = '💾 儲存設定'; btn.classList.remove('success'); }, 2000);
-        
         refreshStatus();
     }
     
     window.onload = () => { 
         if (localStorage.getItem('lastLiveSort')) document.getElementById('liveSort').value = localStorage.getItem('lastLiveSort');
         if (localStorage.getItem('lastHistorySort')) document.getElementById('historySort').value = localStorage.getItem('lastHistorySort');
-        switchTab(localStorage.getItem('lastTab') || 'history'); 
-        refreshStatus(); 
+        switchTab(localStorage.getItem('lastTab') || 'history'); refreshStatus(); 
     };
 </script>
 </body>
